@@ -1,0 +1,196 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this article we provide a general understanding of sequential prediction, with a particular attention to adversarial models. The aim is to provide generical foundations to the problem and to discuss some of its well known application in Economics. The article is mainly based on few key references that the reader can find at the end of the blog article. 
+
+
+
+## Sequential prediction
+
+Forecasting is a key issue in many circumstances, from weather prediction to predicting stock market returns. We discuss the following setting: Nature decides the outcome for a certain event(say, whether tomorrow it will rain or being sunny) , and the forecaster must make its guess before Nature reveals its choice. Once Nature reveals the outcome of its decision, the forecaster incurrs a loss.
+
+More formally, the general set up considers $y_1, y_2,... \in \mathcal{Y}$ being the outcome space. The forecaster chooses an action $I_1 , I_2,... \in \mathcal{D}$ where $\mathcal{D}$ is the decision space and she incurres a loss at time $t$, $l(I_t, y_t)$. In an oblivious game the environment chooses the outcome regardless of the strategy of the opponent. Once Nature reveals its choice, the forecaster incurr a loss. We define $\hat{L}_n = \sum_{t=1}^n l(I_t, y_t)$ the cumulative loss of the forecaster. Some examples of loss functionsare the 0/1 loss - 0 when the forecast is correct, 1 otherwise, the exponential loss and many others. Without loss of generality we can impose that $l(I_t,y_t) \in [0,1]$. The regret at time $t$ for choosing action $I_t$ instead of action $i \in \{1,...,M\}$ is defined as $l(I_t,y_t) - l(i,y_t)$. Intuitevely, the regret indicates how much better your forecast was with respect to forecast of expert $i$. A natural objective function is the average maximum regret faced by the forecaster. The maximum regret is defined as
+$$
+\frac{1}{n}\sum_{t=1}^n l(I_t, y_t) - min_{i=1,...,M}\frac{1}{n}\sum_{t=1}^nl(i,y_t)
+$$
+Forecasting strategies that guarantee that the average regret goes to zero almost surely for all possible strategies of the environment are defined $Hannan$ $consistent$. 
+
+## Prediction with experts advice
+
+Think about yourself choosing between organizing a trip to the beach or studying in the library. You must make your decision the day before the trip. You have access to $M$ weather prevision. Some of them tell you that it is going to rain and , therefore, it would be better to stay in the library studying and others tell you that there will be sun! How can you choose among so many advices? Is there any strategy that is at least consistent over time? 
+
+We start our discussion considering the context of regret minimization for prediction with experts advice [3] under a convex loss function. With an abuse of notation we consider the decision space being $f_{i,1} , f_{i,2},... \in \mathcal{D}$ of each expert $i \in \{1,...,M\}$. 
+
+***Prediction protocol with convex loss function***
+
+For each round $t=1,2,...$:
+
+- the environment chooses the next outcome $y_t \in \{1,...,M\}$ without reveling it;
+- each expert reveals its prediction to the forecaster;
+- the forecaster chooses its forecast being $I_t$;
+- the environment reveals $y_t$;
+- the forecaster suffers the loss $l(I_t, y_t)$ and each expert $i$ suffers a loss $l(f_{i,t}, y_t)$
+
+Consider the strategy consisting in doing a weighted average of experts' advices.  More formally:
+$$
+I_t =\sum_{i=1}^M \frac{W_{i,t}}{W_t}f_{i,t}
+$$
+with $W_{i,t} = \exp(-\eta \sum_{s=1}^{t-1}l(f_{i,s}, y_s)) = \exp(-\eta L_{i,t-1})$, $w_{i,0} = 1$, $W_t = \sum_{i=1}^M W_{i,t}$, $\eta > 0$. 
+The strategy is the so called exponential weighted forecast. Importantly, the strategy is consistent at a rate proportional to $n^{-1/2}$, with $n$ being the number of rounds. This means that for $n$ being large enough, the strategy eventually converges to the optimal forecast. In the next lines we sketch the proof of this result from [2], [3]. 
+
+**Sketch of the Proof.** Considers log($W_N/W_0$) = log($W_N$) - log($M$) =  $\text{log}(\sum_{i=1}^M \exp(-\eta L_{i,n})) - \text{log}(M) = z$ . Then a lower bound can be defined as
+$$
+z \ge \text{log}(max_{i=1,...,M} \exp(-\eta L_{i,n})) - \text{log}(M) = - \eta min_{i=1,...,M}L_{i,n} - \text{log}(M)
+$$
+Notice then that $\text{log}(\frac{W_N}{W_0}) = \text{log}(\prod_{t=1}^N W_t/W_{t-1}) = \sum_{t=1}^N \text{log}(W_t/W_{t-1}) = \sum_{t=1}^N \text{log}(\sum_{i=1}^M q_{i,t-1} \exp(-\eta l(f_{i,t}, y_t))$, with $q_{i,t-1} = \frac{w_{i,t-1}}{w_{t-1}}$. Given that the loss is bounded between $0,1$, by Hoeffding inequality: 
+$$
+\sum_{t=1}^N \text{log}(\sum_{i=1}^M q_{i,t-1} \exp(-\eta l(f_{i,t}, y_t)) \le -\eta \sum_{t=1}^N \frac{w_{i,t-1}}{W_{t-1}} l(f_{i,t}, y_t) + \frac{n \eta^2}{8} = c
+$$
+By Jensen's inequality 
+$$
+c \le -\eta l(\sum_{t=1}^N \frac{w_{i,t-1}}{W_{t-1}}f_{i,t}, y_t) +  \frac{n\eta^2}{8} = -\eta l(\hat{p}_t, y_t) +  \frac{n\eta^2}{8}
+$$
+Therefore we get $-\eta \hat{L}_n + \frac{n\eta^2}{8} \ge -\eta  min_{i=1,...,M} L_{i,n} - \text{log}(M)$. Rearrenging things we get 
+$$
+\hat{L}_n - min_{i=1,...,M} L_{i,n} \le \frac{\text{log}(M)}{\eta} + \frac{n \eta}{8}
+$$
+By the first order conditions on the upper bound we choose $\eta = \sqrt{\frac{8\text{log}(M)}{n}}$ and by substituting the term we get: 
+$$
+\hat{L}_n - min_{i=1,...,M} L_{i,N} \le \sqrt{\frac{n}{2} \text{log}(M)}
+$$
+Letting $\eta_t$ change over time and setting $\eta_t = \sqrt{\frac{8\text{log}(M)}{t}}$ you would get a bound of order $O(\sqrt{n})$[2]. 
+
+In the next line we outline a different strategy that has the same rate of consistency but it can be implemented with any loss function (also non convex).The main difference with the strategy described above is that this strategy radomizes the choice of the forecaster according to a vector of probabilities that we call $\mathbf{p}_t$. The strategy is as follow.
+
+For each round $t=1,2,...$: 
+
+- the environment chooses the next outcome $y_t \in \{1,...,M\}$ without reveling it;
+- each expert reveals its prediction to the forecaster;
+- the forecaster chooses a probability vector $\mathbf{p}_t$ over the set of M actions and draws an action $I_t \in \{1,...,M\}$ with 
+$$
+p_{i,t} = \frac{\exp(-\eta \sum_{s=1}^{t-1}l(f_{i,s}, y_s))}{W_{t-1}}f_{i,t}
+$$
+- the environment reveals $y_t$;
+- the forecaster suffers the loss $l(I_t, y_t)$ and each expert $i$ suffers a loss $l(i, y_t)$
+
+In this case the average regret is bounded by $\sqrt{\frac{n}{2} \text{log}(\frac{1}{\delta})} + \sqrt{\frac{n}{2} \text{log}(M)}$ with probability at least $1 - \delta$. 
+
+Again, we sketch the proof from [3]. 
+
+**Proof.**  To prove the result we first make use of the following lemma: 
+
+**Lemma 1.** Let $X_t \le 1$ being a random variable such that $E[X_t | \mathcal{F}_{t-1}]$, where $\mathcal{F}_{t-1}$ is the filtration at time $t-1$. Then by Hoeffding-Azuma inequality 
+$$
+P(\sum_{s=1}^n X_s - E[X_s] > t) \le \exp(-2t^2/n) \Rightarrow \sum_{s=1}^n X_s - E[X_s] \le \sqrt{\frac{n}{2} \text{log}(1/\delta)} \quad \text{w.p.} \ge 1 - \delta 
+$$
+
+Define $\bar{l}(\mathbf{p}_t, y_t) = \sum_{t=1}^N p_{i,t}l(i, y_t) = E[l(I_t, y_t)|\mathcal{F}_{t-1}]$ where $\mathcal{F}_{t-1}$ is the filtration at time $t-1$. Furthermore, notice that $l(I_t, y_t)$ is a martingale and $\sum_{t=1}^n [l(I_t, y_t) - \bar{l}(\mathbf{p}_t, y_t)] = 0$ has expectation $0$. Using Hoeffding-Azuma  
+$\sum_{t=1}^n [l(I_t, y_t) - \bar{l}(\mathbf{p}_t, y_t)] \le \sqrt{\frac{n}{2}\text{log}(1/\delta)}$ w.p. $\ge 1 - \delta$, therefore the loss are concentrated around expectation. Notice now that $\bar{l}(\mathbf{p}_t, y_t)$ is convex (linear in this case) in the first variable. Therefore by the previous result
+$$
+\sum_{t=1}^N \bar{l}(\mathbf{p}_t, y_t) - min_{i=1,...,M} \sum_{t=1}^n l(i,y_t) \le \sqrt{\frac{n}{2} \text{log}(M)}
+$$
+By adding and subtracting $\sum_{t=1}^N \bar{l}(\mathbf{p}_t, y_t)$: 
+$$
+\sum_{t=1}^n l(I_t, y_t) - min_{i=1,...,M} \sum_{t=1}^n l(i,y_t) \le \sqrt{\frac{n}{2} \text{log}(1/\delta)} + \sqrt{\frac{n}{2} \text{log}(M)}
+$$ which concludes the proof[3].
+
+## Multi-Armed Bandit Problem
+
+We now move to a more complex scenario. After studying in the library on sunny days and going to the beach on raining days you give up in organizing trips. On the other hand, you still want to enjoy your life and you decide to go to restaurants every week. Unfortunately you have no idea of which restaurants are good and which are bad. Every time you eat in a restaurant you are able to assess the loss corresponding to this choice, but you do not know whether the other restaurants were better or worse. Again, you rely on asymptotics to hope that one day you will end up in a decent restaurant. 
+
+Consider the following prediction protocol: 
+
+**Prediction Protocol: Multi-Armed Bandit Problem**
+
+For each round $t=1,2,...$
+
+- the environment chooses the next outcome $y_t \in \{1,...,M\}$ without reveling it;
+- the forecaster chooses a probability vector $\mathbf{p}_t$ over the set of M actions and draws an action $I_t \in \{1,...,M\}$;
+- the forecaster suffers the loss $l(I_t, y_t)$; 
+- only $l(I_t, y_t)$ is reveled to the forecaster, the loss for all other actions remain unknown.
+
+The objective function of the forecaster remains the regret. Clearly the situation is much more challenging, provided that there is not knowledge about the loss that would be incurred by taking a different choice. Auer et al. showed a Hannan consistent strategy at rate $O(\sqrt{n})$. We define the following unbiased estimator: 
+$$
+\tilde{l}(i, y_t) = \frac{l(i, y_t) \mathbf{1}_{I_t = i}}{p_{i,t}}
+$$
+where $p_{i,t}$ is the probability of choosing action $i$ at time $t$ and $\mathbf{1}_x$ is the indicator variable equal to one if $x$ is true, $0$ otherwise. Notice that 
+$$
+E_t[\tilde{l}(i,  y_t)] = \sum_{j=1}^M p_{j,t} \frac{l(i, y_t) \mathbf{1}_{i = j}}{p_{i,t}} = l(i,y_t)
+$$
+
+**A forecasting strategy in Multi-Armed Bandit Problem**
+
+We define $g(i, y_t) = 1 - l(i, y_t)$ the gain and $\tilde{g}(i, y_t) = \frac{g(i, y_t)}{p_{i,t}}\mathbf{1}_{I_t = i}$ the estimated unbiased gain. Notice that $g(i, y_t) - \tilde{g}(i, y_t)$ is at most 1, a property used for a martingale-type bound. Choose $\eta, \gamma, \beta > 0$. Initialize $w_{i, 0} = 1, p_{i,1} = 1/M$. 
+
+For each round $t = 1,2,...$
+
+- Select an action $I_t$ according to the probability distribution $\mathbf{p}_t$;
+- calculate the estimated gain: 
+$$
+g'(i, y_t) = \tilde{g}(i, y_t) + \beta/p_{i,t}
+$$
+- update the weights $w_{i,t} = w_{i,t-1}\exp(\eta g'(i,y_t))$;
+- update the probabilities $p_{i,t+1} = (1 - \gamma)\frac{w_{i,t}}{W_t} + \frac{\gamma}{M}$ with exponential weights.
+
+Note that by introducing a parameter $\beta$ we give up the unbiasedness of the estimate to guarantee that the estimated cumulative gains are, with
+large probability, not much smaller than the actual cumulative gains.
+Under conditions of theorem 6.10 [2] the regret is $O(\sqrt{n})$, in particular 
+$$
+\hat{L}_n - min_{i=1,...,M} L_{i,n} \le 11/2\sqrt{n M \text{log}(M/\delta)} + \text{log}(M)/2
+\quad w.p. \ge 1 - \delta
+$$ 
+We want to stress that the main ingredients for an optimal rate of convergency in probability are contained in the so called "exploration-exploitation trade off". In fact notice that 
+$$
+p_{i,t} = \frac{\exp(-\eta \sum_{s=1}^{t-1} \tilde{l}(i, y_s))}{\sum_{j=1}^M \exp(-\eta \sum_{s=1}^{t-1} \tilde{l}(j, y_s))}(1 - \gamma) + \frac{\gamma}{M}
+$$
+then the first term multiplying by $1 - \gamma$ contains information regarding the losses of the actions taken in the past. The second term instead let the forecaster have non-zero probabilities for exploring new actions.
+
+## Partial Monitoring Multi-Armed Bandit Problem
+
+We finish this article by describing a new interesting scenario. Consider a vendor selling a product to customers one by one. She can select a different price for each customer but no barganing is allowed and no further information can be exchanged between the buyer and the seller. Assume that the willingness to pay of each buyer is $y_t$ $\in [0,1]$, the actual price offered to the seller is $z_t$ and the loss incurred by the seller at time  $t$ is
+$$
+l(p_t, y_t) = (y_t - z_t) \mathbf{1}_{z_t \le y_t} + c\mathbf{1}_{z_t > y_t}
+$$
+with $c \in [0,1]$. The seller can only observe whether the customer buys or not the product and has no clue about the empirical distribution of $y_t$. A natural question is whether it exists a randomized strategy for the seller such that the average regret is $Hannan$ $consistent$. 
+
+In a more general setting we define the following prediction protocol:  
+
+***Prediction Protocol: Partial Monitoring Multi-Armed Bandit Problem***
+
+For each round $t=1,2,...$
+
+- the environment chooses the next outcome $y_t \in \{1,...,M\}$ without reveling it;
+- the forecaster chooses a probability vector $\mathbf{p}_t$ over the set of M actions and draws an action $I_t \in \{1,...,M\}$;
+- the forecaster suffers the loss $l(I_t, y_t)$; 
+- only a feedback $h(I_t, y_t)$ is reveled to the forecaster.
+
+The losses of the forecaster can be summurized in the loss matrix $\mathbf{L} = [l(i,j)]_{N \times M}$. With no loss of generality $l(I_t, y_t) \in [0,1]$. At every iteration the forecaster chooses an action $I_t$, suffers a loss $l(I_t, y_t)$ but she only observes a feedback $h(I_t, y_t)$ parametrized by a given feedback function $h$ that assigns to each action/outcome pair $\in \{1,...,N\} \times \{1,...,M\}$ an element of a finite set $\mathcal{S} = \{s_1,...,s_m\}$ of signals. The values are collected in the feedback matrix $\mathbf{H} = [h(i,j)]_{N \times M}$. Notice that the forecaster at time $t$ has access only to the information $(h(I_1, yL = _1),..., h(I_{t-1}, y_{t-1}))$. In [1] the following strategy was shown to be $Hannan$ $consistent$ at a sub-optimal rate $O(n^{-1/3})$. 
+Assume that $l(i,j) = \sum_{l=1}^N k(i,l) h(l,j)$, that is $\mathbf{L} = \mathbf{K} \mathbf{H}$, considering $\mathbf{H}$ and $[\mathbf{H} \quad \mathbf{L}]$ having the same rank. Define $k^* = \text{max}_{i,j}\{1, |k(i,j)|\}$ and as an unbiased estimator of the loss:
+$$
+\tilde{l}(i, y_t) = \frac{k(i, I_t) h(I_t, y_t)}{p_{I_t, t}} \quad \forall i = 1,...,N
+$$
+with $p_{I_t, t}$ being the probability of having chosen action $I_t$ at time $t$ and $\tilde{L}_{i,t} = \sum_{s=1}^t \tilde{l}(i,y_t)$. Initialize $\tilde{L}_{1,0} = ... = \tilde{L}_{M,0} = 0$. 
+
+For each round $t = 1,2,...$ 
+
+- Let $\eta_t = (k^*)^{-2/3}((ln M)/M)^{2/3} t^{-2/3}$ and $\gamma_t = (k^*)^{2/3}M^{2/3}(ln M)^{1/3}t^{-1/3}$;
+- choose an action $I_t$ from the set of actions $\{1,...,M\}$ at random accordding to the distribution $\mathbf{p}_t$ defined by
+$$
+p_{i,t} = (1 - \gamma_t) \frac{e^{-\eta_t \tilde{L}_{i,t-1}}}{\sum_{k=1}^M e^{-\eta_t \tilde{L}_{k,t-1}}} + \frac{\gamma_t}{M}
+$$
+- let $\tilde{L}_{i,t} = \tilde{L}_{i,t-1} + \tilde{l}(i, y_t)$ for all $ i = 1,...,M$ 
+
+In [1] the authors showed that under some mild conditions the strategy has a performance bound with a magnitude proportional to $n^{2/3}(k^* M)^{2/3}(ln M)^{1/3}$, that is with a convergency rate $O(n^{-1/3})$. 
+
+
+## References
+
+- [1] Cesa-Bianchi, Nicolo, Gábor Lugosi, and Gilles Stoltz. "Regret minimization under partial monitoring." Mathematics of Operations Research 31.3 (2006): 562-580.
+- [2] Cesa-Bianchi, Nicolo, and Gábor Lugosi. Prediction, learning, and games. Cambridge university press, 2006.
+- [3] Cesa-Bianchi, Nicolo, and Gábor Lugosi. "On prediction of individual sequences." The Annals of Statistics 27.6 (1999): 1865-1895.
+- [4] Helmbold, David P., Nicholas Littlestone, and Philip M. Long. "Apple tasting." Information and Computation 161.2 (2000): 85-139.
