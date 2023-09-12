@@ -69,20 +69,7 @@
 <!-- For all browsers -->
 <link rel="stylesheet" href="https://tdevries1.github.io/assets/css/main.css">
 
-<!--[if lte IE 9]>
-  <style>
-    /* old IE unsupported flexbox fixes */
-    .greedy-nav .site-title {
-      padding-right: 3em;
-    }
-    .greedy-nav button {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 100%;
-    }
-  </style>
-<![endif]-->
+
 
 <meta http-equiv="cleartype" content="on">
     <!-- start custom head snippets -->
@@ -94,10 +81,10 @@
 
   <body class="layout--home">
 
-    <!--[if lt IE 9]>
-<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
-<![endif]-->
-    <div class="masthead">
+<!--   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- --> 
+<!--       HEADER OF PAGE "RESEARCH":     -->
+<!--   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
+<div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
@@ -115,8 +102,7 @@
           
             <li class="masthead__menu-item"><a href="https://tdevries1.github.io/research/">Research</a></li>
 
-         <!--        <li class="masthead__menu-item"><a href="https://dviviano.github.io/teaching/">Teaching</a></li> -->
-         <!--   <li class="masthead__menu-item"><a href="https://urldefense.com/v3/__https://dviviano.github.io/blog/__;!!Mih3wA!R9HyRDRVfOsu8G9XGpbtWSPUo9m8Ix5UUetkHLY8dJA7W9i6iT22-YGcKJ2EpJhF$">Personal Blog</a></li> -->
+        
           
        </nav>
     </div>
@@ -125,7 +111,9 @@
 
     
 
-
+<!--   -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
+<!--       SIDEBAR WITH MULTIMEDIA CONTENTS & PICTURE    -->
+<!--   -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
 
 <div id="main" role="main">
   
@@ -134,69 +122,45 @@
 
 <div itemscope itemtype="http://schema.org/Person">
 
-  
+  <!--  Upload Avatar Picture -->  
     <div class="author__avatar">
-      
         <img src="https://tdevries1.github.io/img/starry_night.jpg" class="author__avatar" alt="Tjeerd de Vries" itemprop="image">
-      
     </div>
   
-
+<!--  Description of me -->
   <div class="author__content">
     <h3 class="author__name" itemprop="name">Tjeerd de Vries</h3>
-    
-      <p class="author__bio" itemprop="description">
-        Ph.D. Candidate, UC San Diego. 
-      </p>
-    
+      <p class="author__bio" itemprop="description"> Ph.D. Candidate, UC San Diego. </p>
   </div>
 
+  <!-- Multimedia Hyperlinks -->
   <div class="author__urls-wrapper">
     <button class="btn btn--inverse">Follow</button>
     <ul class="author__urls social-icons">
       
-        <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place">
-          <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> <span itemprop="name">San Diego, CA</span>
-        </li>
-      
+     <!--           Location --> 
+  <li itemprop="homeLocation" itemscope itemtype="http://schema.org/Place"><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> <span itemprop="name">San Diego, CA</span></li>    
 
-      
-
-            
-        <li>
-          <a href="https://github.com/tdevries1" itemprop="sameAs">
-            <i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub
-          </a>
-        </li>
+  <!--           GitHub -->          
+  <li>
+    <a href="https://github.com/tdevries1" itemprop="sameAs"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub </a> </li>
 
       <!--           LinkedIn -->
-          <li><a href="https://www.linkedin.com/in/tjeerd-de-vries-b8a270223/" itemprop="sameAs"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn </a> </li>   
+  <li><a href="https://www.linkedin.com/in/tjeerd-de-vries-b8a270223/" itemprop="sameAs"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn </a> </li>   
 
       
-
-      
- 
-
-      <!--
-  <li>
-    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs">
-      <i class="fa fa-fw" aria-hidden="true"></i> Custom Social Profile Link
-    </a>
-  </li>
--->
-    </ul>
+      </ul>
+    </div>
   </div>
 </div>
 
-  
-  </div>
-
 
   <div class="archive">
-    
-      <h1 class="page__title"></h1>
-    
-     <h3 class="archive__subtitle">Publications</h3>
+    <h1 class="page__title"></h1>
+    <h3 class="archive__subtitle">Publications</h3>
+
+               <!--  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=     -->     
+                       <!--                              List published Papers Here                               -->
     
     <ul>
      
@@ -215,6 +179,9 @@
     </ul>
       
     <h3 class="archive__subtitle">Working Papers</h3>
+
+                   <!--  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=     -->     
+                       <!--                              List working Papers Here                               -->
 
 
     <ul>
@@ -257,16 +224,13 @@ model-free evidence of time varying disaster risk. </small>
    we propose a (term structure) model-free bond portfolio selection method that generalizes classical immunization and accommodates arbitrary liability structure, portfolio constraint, 
    and perturbations to the interest rates. Given the basis functions to approximate yield curve shifts, we (i) prove the generic existence of an immunizing portfolio that maximizes the worst-case 
    equity with a tight error estimate and (ii) provide a solution algorithm. Numerical evaluations using empirical yield curves support the feasibility and accuracy of our method.  </small>
-  
-  
-   
- 
 
  </ul>
 
 
       <h3 class="archive__subtitle">Work in Progress</h3>
-
+               <!--  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=     -->     
+                       <!--                              List Work in Progress Here                               -->
 
     <ul>
 
@@ -296,7 +260,8 @@ model-free evidence of time varying disaster risk. </small>
     </ul>
    
    
-    
+    <!--  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=     -->     
+        <!--                             Upcoming presentations                              -->
 
     <h3 class="archive__subtitle">Recent and Upcoming Presentations</h3>
   <small> Economics Seminar - Chapman University, Orange County: 08/23/23  </small>    
@@ -312,11 +277,6 @@ model-free evidence of time varying disaster risk. </small>
  <small> EGSC - University of Washington, St. Louis : 10/26/20 <a href="https://urldefense.com/v3/__https://sites.wustl.edu/egsc/about/__;!!Mih3wA!R9HyRDRVfOsu8G9XGpbtWSPUo9m8Ix5UUetkHLY8dJA7W9i6iT22-YGcKG-5V2gR$" style="color:blue">[link] </a> </small>
 <br>
  
-
-
-
-
-   
 
 
   </body>
